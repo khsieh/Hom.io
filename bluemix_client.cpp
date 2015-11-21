@@ -35,3 +35,8 @@ void bluemix_client::on_message(const struct mosquitto_message *message)
 {
    cout << "got a message!" << endl;
 }
+
+void bluemix_client::on_publish(int mid)
+{
+   cout << "published!" << endl;
+}

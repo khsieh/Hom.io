@@ -11,6 +11,7 @@ public:
    void on_connect(int rc);
    void on_message(const struct mosquitto_message *message);
    void on_subscribe(int mid, int qos_cout, const int *granted_qos);
+   void on_publish(int mid);
 };
 
 #endif
