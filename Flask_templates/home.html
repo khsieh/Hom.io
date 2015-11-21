@@ -1,0 +1,12 @@
+<!-- child template that inherits markup from layout, 
+fills in content block with its own text
+
+layout defines common elements,
+child fills the template with iits own content -->
+{% extends "layout.html" %}
+{% block content %}
+  <div class="jumbo">
+    <h2>Welcome to Hom.io<h2>
+    <h3>This is the home page for Hom.io<h3>
+  </div>
+{% endblock %}
