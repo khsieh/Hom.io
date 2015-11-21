@@ -1,0 +1,1 @@
+A smartHome environment that focuses on minimizing energy consumption.
