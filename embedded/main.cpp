@@ -4,6 +4,8 @@
 
 #include "mraa.hpp"
 #include "upm/grove.h"
+#include "upm/groveloudness.h"
+#include "upm/servo.h"
 #include "mosquittopp.h"
 #include "json/json.h"
 
@@ -15,14 +17,16 @@ using namespace upm;
 using namespace mosqpp;
 using namespace Json;
 
-GroveTemp *temp;
+Servo servo(5);
+GroveLed led(3);
+GroveTemp temp(0);
+GroveLight light(3);
+GroveLoudness sound(2);
+FastWriter writer;
+Value root(objectValue);
 
 int main()
 {
-    Pwm led(3);
-    GroveTemp temp(0);
-    FastWriter writer;
-    Value root(objectValue);
     root["d"] = Value(objectValue);
     FILE *f = fopen("device.cfg", "r");
     char broker[100];
@@ -34,11 +38,17 @@ int main()
     bluemix_client client(id, broker, 1883);
     while(true) {
         int res = client.loop();
-        int value = temp.value();
-        root["d"]["temp"] = value;
+        root["d"]["temp"] = temp.value();
+        root["d"]["sound"] = sound.value();
+	int light_level = light.value();
+	float led_level = 1.0/(1+light_level);
+        root["d"]["outdoor_light"] = light_level;
+        root["d"]["indoor_light"] = led_level;
+        led.write(led_level);
         string output = writer.write(root);
+        cout << sound.value() << endl;
+        //cout << output << endl;
         int error = client.publish(NULL, topic, output.size(), output.c_str());
-        cout << error << endl;
         if(res) {
 	    switch(res) {
 		case MOSQ_ERR_INVAL:
@@ -62,6 +72,7 @@ int main()
 	    }
             client.reconnect();
         }
+        sleep(1);
     }
 }
 
